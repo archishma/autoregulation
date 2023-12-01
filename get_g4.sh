@@ -6,6 +6,7 @@ module load samtools
 
 while read -r line
 do
+	i=0
 	chr="`echo ${line} | cut -d " " -f 1| tr -d "chr"`"
 	pos_start="`echo ${line} | cut -d " " -f 4`"
 	pos_end="`echo ${line} | cut -d " " -f 5`"
@@ -18,8 +19,10 @@ do
 	else # reverse strand 
 		sequence="`samtools faidx -i --mark-strand no ${GENOME} ${chr}:${pos_start}-${pos_end} | tr -d "\n"`"
 	fi
-	echo $sequence
-	echo "$sequence" | grep -E -o "[T]{3,5}.AAT"
-	
-	break # just to test on the first line 
+	# echo $sequence
+	echo "$sequence" | grep -E -o "[G]{3,5}.{1,7}[G]{3,5}.{1,7}[G]{3,5}.{1,7}[G]{3,5}.{1,7}"
+	i=`${i}+1`
+	if [$i == 5]; then
+		break # just to test on the first 5 lines
+	fi  
 done < $REGIONS
