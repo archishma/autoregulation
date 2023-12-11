@@ -1,0 +1,64 @@
+## 231211 - EDA?
+I have G4s from CDS, 5' UTR and 3' UTR regions 
+Disease causing regions? overlaps with eCLIP BAMs? 
+
+```{r}
+library(tidyr)
+
+setwd("~/rna/autoregulation/g4/")
+cds <- read.table("cds.GRCh38.g4.tsv", header = FALSE, 
+                  col.names = c("annot", "id", "seq"))
+utr5 <- read.table("utr5.GRCh38.g4.tsv", header = FALSE, 
+                   col.names = c("annot", "id", "seq"))
+utr3 <- read.table("utr3.GRCh38.g4.tsv", header = FALSE, 
+                   col.names = c("annot", "id", "seq"))
+
+# head(cds)
+# typeof(cds)
+```
+
+### Basic info 
+```{r}
+cat("G4s in CDS: ", dim(cds)[1], "\n")
+cat("G4s in 5' UTR:", dim(utr5)[1], "\n")
+cat("G4s in 3' UTR:", dim(utr3)[1], "\n")
+```
+There are a lot more in 3' UTR - is that significant?
+- Exploring mRNA 3′-UTR G-quadruplexes: evidence of roles in both alternative polyadenylation and mRNA shortening
+  - https://pubmed.ncbi.nlm.nih.gov/23609544 
+
+### Tidy up dataframes so info is more easily accessible 
+```{r}
+cds <- separate(cds, col = "annot", 
+                into = c("chr", "pos", "str"), 
+                sep = ":")
+cds <- separate(cds, col = "pos", 
+                into = c("start", "stop"), 
+                sep = "-")
+
+utr5 <- separate(utr5, col = "annot", 
+                into = c("chr", "pos", "str"), 
+                sep = ":")
+utr5 <- separate(utr5, col = "pos", 
+                into = c("start", "stop"), 
+                sep = "-")
+
+utr3 <- separate(utr3, col = "annot", 
+                into = c("chr", "pos", "str"), 
+                sep = ":")
+utr3 <- separate(utr3, col = "pos", 
+                into = c("start", "stop"), 
+                sep = "-") 
+```
+
+### How many in each chrom? 
+```{r}
+cds.regions <- table(cds$chr)
+sort(cds.regions, decreasing = TRUE)
+
+utr5.regions <- table(utr5$chr)
+sort(utr5.regions, decreasing = TRUE)
+
+utr3.regions <- table(utr3$chr)
+sort(utr3.regions, decreasing = TRUE)
+```
