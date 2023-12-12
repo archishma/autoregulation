@@ -1,9 +1,10 @@
 ## 231211 - EDA
+
 ```{r, setup, include = FALSE}
 knitr::opts_knit$set(root.dir = '~/rna/autoregulation/g4/')
 ```
-I have G4s from CDS, 5' UTR and 3' UTR regions 
-Disease causing regions? overlaps with eCLIP BAMs? 
+
+I have G4s from CDS, 5' UTR and 3' UTR regions Disease causing regions? overlaps with eCLIP BAMs?
 
 ```{r}
 library(tidyr)
@@ -19,17 +20,24 @@ utr3 <- read.table("utr3.GRCh38.g4.tsv", header = FALSE,
 # typeof(cds)
 ```
 
-### Basic info 
+### Basic info
+
 ```{r}
 cat("G4-containing exons in CDS: ", dim(cds)[1], "\n")
 cat("G4-containing exons in 5' UTR:", dim(utr5)[1], "\n")
 cat("G4-containing exons in 3' UTR:", dim(utr3)[1], "\n")
 ```
-There are a lot more in 3' UTR - is that significant?  
-- Exploring mRNA 3′-UTR G-quadruplexes: evidence of roles in both alternative polyadenylation and mRNA shortening  
-  - https://pubmed.ncbi.nlm.nih.gov/23609544  
 
-### Tidy up dataframes so info is more easily accessible 
+-   There are a lot more in 3' UTR - is that significant?
+
+-   Exploring mRNA 3′-UTR G-quadruplexes: evidence of roles in both alternative polyadenylation and mRNA shortening
+
+    -   https://pubmed.ncbi.nlm.nih.gov/23609544
+
+-   Conversation with Dan: when we look at G4 frequency in each region, 5' UTR should have the highest frequency (not in raw counts - the other regions will have more in raw numbers, simply because they are longer regions)
+
+### Tidy up dataframes so info is more easily accessible
+
 ```{r}
 cds <- separate(cds, col = "annot", 
                 into = c("chr", "pos", "str"), 
@@ -53,7 +61,8 @@ utr3 <- separate(utr3, col = "pos",
                 sep = "-") 
 ```
 
-### How many in each chrom? 
+### How many in each chrom?
+
 ```{r}
 cds.regions <- table(cds$chr)
 sort(cds.regions, decreasing = TRUE)
@@ -66,12 +75,19 @@ sort(utr3.regions, decreasing = TRUE)
 ```
 
 ### Find eCLIP peak overlaps with G4 regions
-https://research.stowers.org/cws/CompGenomics/Tutorial/GRanges/guide.html 
+
+<https://research.stowers.org/cws/CompGenomics/Tutorial/GRanges/guide.html>
+
 Idea:
-1. get BED files from eCLIP data available in lab proj space
-1. get ranges data from my G4 files 
-1. convert all to GRanges objects 
-1. find intersections? 
+
+1.  get BED files from eCLIP data available in lab proj space
+
+2.  get ranges data from my G4 files
+
+3.  convert all to GRanges objects
+
+4.  find intersections?
+
 ```{r}
 library(GenomicRanges)
 
