@@ -1,11 +1,13 @@
-## 231211 - EDA?
+## 231211 - EDA
+```{r, setup, include = FALSE}
+knitr::opts_knit$set(root.dir = '~/rna/autoregulation/g4/')
+```
 I have G4s from CDS, 5' UTR and 3' UTR regions 
 Disease causing regions? overlaps with eCLIP BAMs? 
 
 ```{r}
 library(tidyr)
 
-setwd("~/rna/autoregulation/g4/")
 cds <- read.table("cds.GRCh38.g4.tsv", header = FALSE, 
                   col.names = c("annot", "id", "seq"))
 utr5 <- read.table("utr5.GRCh38.g4.tsv", header = FALSE, 
@@ -19,13 +21,13 @@ utr3 <- read.table("utr3.GRCh38.g4.tsv", header = FALSE,
 
 ### Basic info 
 ```{r}
-cat("G4s in CDS: ", dim(cds)[1], "\n")
-cat("G4s in 5' UTR:", dim(utr5)[1], "\n")
-cat("G4s in 3' UTR:", dim(utr3)[1], "\n")
+cat("G4-containing exons in CDS: ", dim(cds)[1], "\n")
+cat("G4-containing exons in 5' UTR:", dim(utr5)[1], "\n")
+cat("G4-containing exons in 3' UTR:", dim(utr3)[1], "\n")
 ```
-There are a lot more in 3' UTR - is that significant?
-- Exploring mRNA 3′-UTR G-quadruplexes: evidence of roles in both alternative polyadenylation and mRNA shortening
-  - https://pubmed.ncbi.nlm.nih.gov/23609544 
+There are a lot more in 3' UTR - is that significant?  
+- Exploring mRNA 3′-UTR G-quadruplexes: evidence of roles in both alternative polyadenylation and mRNA shortening  
+  - https://pubmed.ncbi.nlm.nih.gov/23609544  
 
 ### Tidy up dataframes so info is more easily accessible 
 ```{r}
@@ -61,4 +63,16 @@ sort(utr5.regions, decreasing = TRUE)
 
 utr3.regions <- table(utr3$chr)
 sort(utr3.regions, decreasing = TRUE)
+```
+
+### Find eCLIP peak overlaps with G4 regions
+https://research.stowers.org/cws/CompGenomics/Tutorial/GRanges/guide.html 
+Idea:
+1. get BED files from eCLIP data available in lab proj space
+1. get ranges data from my G4 files 
+1. convert all to GRanges objects 
+1. find intersections? 
+```{r}
+library(GenomicRanges)
+
 ```
