@@ -6,6 +6,8 @@ library(dplyr)
 ### I modified the 231208 file to see if I can maintain the exon info
 ### in each transcript 
 
+# this shouldn't need to be run again
+
 setwd("/nas/longleaf/home/askav/rna/autoregulation/g4/")
 ah <- AnnotationHub()
 
@@ -54,6 +56,11 @@ write.table(cds.df.tx,
             sep = "\t",
             row.names = FALSE)
 
+write.table(cds.df,
+            file = "GRCh38.cds.exons.tsv",
+            sep = "\t",
+            row.names = FALSE)
+
 # 5' UTR annotations and sequences 
 utr5 <- unlist(utr5)
 utr5.annot <- as.character(utr5)
@@ -79,6 +86,11 @@ write.table(utr5.df.tx,
             sep = "\t",
             row.names = FALSE)
 
+write.table(utr5.df,
+            file = "GRCh38.utr5.exons.tsv",
+            sep = "\t",
+            row.names = FALSE)
+
 # 3' UTR annotations and sequences 
 utr3 <- unlist(utr3)
 utr3.annot <- as.character(utr3)
@@ -91,6 +103,10 @@ utr3.df <- data.frame(annot = utr3.annot,
                       seq = utr3.seq,
                       exon_rank = utr3$exon_rank,
                       exon_id = utr3$exon_id)
+write.table(utr3.df,
+            file = "GRCh38.utr3.exons.tsv",
+            sep = "\t",
+            row.names = FALSE)
 
 utr3.df.tx <- 
   utr3.df %>%
