@@ -53,22 +53,22 @@ cds.tx.exons <- cds.g4.exons %>%
   separate(col = "annot", into = c("chr", "range", "strand"), sep = ":") 
 sum(is.na(cds.tx.exons)) # 0
 
-cds.tx.exons$starts <- cds.tx.exons$range %>% lapply(split.range, num = 1)
-cds.tx.exons$stops <- cds.tx.exons$range %>% lapply(split.range, num = 2)
+cds.tx.exons$gen_starts <- cds.tx.exons$range %>% lapply(split.range, num = 1)
+cds.tx.exons$gen_stops <- cds.tx.exons$range %>% lapply(split.range, num = 2)
 sum(is.na(cds.tx.exons)) # 0. this is not the behavior I get with separate()
 
 # 5' UTR
 utr5.tx.exons <- utr5.g4.exons %>%  
   separate(col = "annot", into = c("chr", "range", "strand"), sep = ":")
-utr5.tx.exons$starts <- utr5.tx.exons$range %>% lapply(split.range, num = 1)
-utr5.tx.exons$stops <- utr5.tx.exons$range %>% lapply(split.range, num = 2)
+utr5.tx.exons$gen_starts <- utr5.tx.exons$range %>% lapply(split.range, num = 1)
+utr5.tx.exons$gen_stops <- utr5.tx.exons$range %>% lapply(split.range, num = 2)
 sum(is.na(utr5.tx.exons)) # 0 
 
 # 3' UTR
 utr3.tx.exons <- utr3.g4.exons %>% 
   separate(col = "annot", into = c("chr", "range", "strand"), sep = ":")
-utr3.tx.exons$starts <- utr3.tx.exons$range %>% lapply(split.range, num = 1)
-utr3.tx.exons$stops <- utr3.tx.exons$range %>% lapply(split.range, num = 2)
+utr3.tx.exons$gen_starts <- utr3.tx.exons$range %>% lapply(split.range, num = 1)
+utr3.tx.exons$gen_stops <- utr3.tx.exons$range %>% lapply(split.range, num = 2)
 
 # get rid of objs we won't need anymore 
 rm(cds.exons, cds.g4.exons)
@@ -107,4 +107,23 @@ s1
 s2
 # get exons corresponding to transcript 
 exons.5340 <- cds.tx.exons[cds.tx.exons$id == "ENST00000005340",]
-exons.5340
+exons.5340[,c("gen_starts", "gen_stops")]
+
+# example (naive) method for a single transcript 
+# I'm not yet sure of a faster way to do this. 
+# make sure chrom start, stop columns are numeric 
+exons.5340[,c("gen_starts","gen_stops")] <- sapply(exons.5340[,c("gen_starts","gen_stops")], as.numeric)
+
+# base case 
+exons.5340$tx_start <- NA
+exons.5340$tx_stop <- NA
+exons.5340$tx_start[1] <- 1
+exons.5340$tx_stop[1] <- exons.5340$gen_stops[1] - exons.5340$gen_starts[1] + 1
+# loop over the exons in the tx 
+for (i in seq(2,length(exons.5340$gen_starts))) {
+  exons.5340$tx_start[i] <- exons.5340$tx_stop[i-1] + 1
+  exons.5340$tx_stop[i] <- exons.5340$tx_start[i] + exons.5340$gen_stops[i] - exons.5340$gen_starts[i]
+}
+exons.5340$tx_stop[length(exons.5340$tx_stop)] # 2211
+nchar(seq) #2211
+# my method works 
