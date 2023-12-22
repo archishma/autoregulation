@@ -141,17 +141,27 @@ for (i in seq(length(utr3.g4))) {
 utr3.tx.g4$starts <- utr3.g4.starts
 utr3.tx.g4$stops <- utr3.g4.stops
 
+# reformat the data 
+cds.tx.g4 <- unnest(cds.tx.g4, cols = c(starts, stops))
+utr5.tx.g4 <- unnest(utr5.tx.g4, cols = c(starts, stops))
+utr3.tx.g4 <- unnest(utr3.tx.g4, cols = c(starts, stops))
+
 ### STATS 
 # how many g4s 
-cds.g4.sum <- 0 
-for (pos in cds.tx.g4$starts) { cds.g4.sum <- cds.g4.sum + length(pos)}
+cat("CDS G4s counted: ", dim(cds.tx.g4)[1], "\n") # 4908
+cat("UTR5 G4s counted: ", dim(utr5.tx.g4)[1], "\n") # 6248
+cat("UTR3 G4s counted: ", dim(utr3.tx.g4)[1], "\n") # 10574
 
-utr5.g4.sum <- 0 
-for (pos in utr5.tx.g4$starts) { utr5.g4.sum <- utr5.g4.sum + length(pos)}
-
-utr3.g4.sum <- 0 
-for (pos in utr3.tx.g4$starts) { utr3.g4.sum <- utr3.g4.sum + length(pos)}
-
-cat("CDS G4s counted: ", cds.g4.sum, "\n")
-cat("UTR5 G4s counted: ", utr5.g4.sum, "\n")
-cat("UTR3 G4s counted: ", utr3.g4.sum, "\n")
+### save the data 
+# cds.tx.g4 %>% write.table("~/rna/autoregulation/231215_G4_outputs/cds.tx.g4.coords.tsv", 
+#                           sep = "\t")
+# utr5.tx.g4 %>% write.table("~/rna/autoregulation/231215_G4_outputs/utr5.tx.g4.coords.tsv", 
+#                           sep = "\t")
+# utr3.tx.g4 %>% write.table("~/rna/autoregulation/231215_G4_outputs/utr3.tx.g4.coords.tsv", 
+#                            sep = "\t")
+# cds.pos %>% write.table("~/rna/autoregulation/231215_G4_outputs/cds.tx.exons.coords.tsv",
+#                         sep = "\t")
+# utr5.pos %>% write.table("~/rna/autoregulation/231215_G4_outputs/utr5.tx.exons.coords.tsv",
+#                         sep = "\t")
+# utr3.pos %>% write.table("~/rna/autoregulation/231215_G4_outputs/utr3.tx.exons.coords.tsv",
+#                          sep = "\t")
